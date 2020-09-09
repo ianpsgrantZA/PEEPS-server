@@ -1,5 +1,5 @@
 <?php
-echo "Connecting Android to Postgres";
+// echo "Connecting Android to Postgres";
 
 
 
