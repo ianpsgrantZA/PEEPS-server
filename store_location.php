@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Checks if user has an account
+ * Stores user location data to table
  */
 
 // Return array as JSON
@@ -15,10 +15,12 @@ $decoded = json_decode($content, true);
 define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'].'/peeps-server');
 
 //check for all required fields
-if (isset($decoded['username']) && isset($decoded['password'])) {
+if (isset($decoded['user_id']) && isset($decoded['location_lat']) && isset($decoded['location_lon']) && isset($decoded['timestamp'])) {
     
-    $username = $decoded['username'];
-    $password = $decoded['password'];
+    $user_id = $decoded['user_id'];
+    $lat = $decoded['location_lat'];
+    $lon = $decoded['location_lon'];
+    $timestamp= $decoded['timestamp'];
     
     require_once ROOT_PATH . "/db_connect.php";
 
@@ -26,7 +28,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     $db_con = pg_connect("host=localhost port=5432 dbname=PEEPS user=postgres password=admin");
 
     //check if record exists
-    $add_query = "SELECT COUNT(1) FROM public.users WHERE username = '$username' AND password = '$password';";
+    $add_query = "INSERT INTO public.location_data(user_id, timestamp, coordinates) VALUES ('$user_id', '$timestamp',ST_MakePoint($lon,$lat));";
     
     $result = pg_query($db_con, $add_query);
 
@@ -34,14 +36,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     if ($result) {
         //SUCCESS
         $response["success"] = 1;
-        $response["message"] = "Accessed database successfully";
-
-        $row = pg_fetch_assoc($result);
-        if ($row["count"]) {
-            $response["login_status"] = 1;
-        }else {
-            $response["login_status"] = 0;
-        }
+        $response["message"] = "Location updated.";
 
         //echo response
         pg_close();
@@ -49,7 +44,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     } else {
         // FAILURE
         $response["success"] = 0;
-        $response["message"] = "User login unsuccessful: unable to query database.";
+        $response["message"] = "Location update failed.";
 
         //echo response
         pg_close();
@@ -59,8 +54,6 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     // missing field
     $response["success"] = 0;
     $response["message"] = "Required field(s) is missing.";
-    // $response["user"] = $decoded['username'];
-    // $response["pass"] = $decoded['password'];
 
     //echo response
     echo json_encode($response);

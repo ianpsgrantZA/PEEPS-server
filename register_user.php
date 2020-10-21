@@ -44,6 +44,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
         $response["message"] = "User registration successful!";
 
         //echo response
+        pg_close();
         echo json_encode($response);
     } else {
         // FAILURE
@@ -51,6 +52,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
         $response["message"] = "User registration unsuccessful.";
 
         //echo response
+        pg_close();
         echo json_encode($response);
     }
 } else {
