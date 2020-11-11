@@ -26,7 +26,7 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     //include db_connect.php
     // require_once __DIR__ . '/db_connect.php';
     
-    require_once ROOT_PATH . "/db_connect.php";
+    // require_once ROOT_PATH . "/db_connect.php";
     // include_once 'db_connect.php';
 
     //connect to DB

@@ -22,7 +22,7 @@ if (isset($decoded['user_id']) && isset($decoded['location_lat']) && isset($deco
     $lon = $decoded['location_lon'];
     $timestamp= $decoded['timestamp'];
     
-    require_once ROOT_PATH . "/db_connect.php";
+    // require_once ROOT_PATH . "/db_connect.php";
 
     //connect to DB
     $db_con = pg_connect("host=localhost port=5432 dbname=PEEPS user=postgres password=admin");
