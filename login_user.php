@@ -19,8 +19,6 @@ if (isset($decoded['username']) && isset($decoded['password'])) {
     
     $username = $decoded['username'];
     $password = $decoded['password'];
-    
-    // require_once ROOT_PATH . "/db_connect.php";
 
     //connect to DB
     $db_con = pg_connect("host=localhost port=5432 dbname=PEEPS user=postgres password=admin");

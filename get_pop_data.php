@@ -20,7 +20,6 @@ if (isset($decoded['locations'])) {
     $locations = $decoded['locations'];
     $length = count($locations);
     
-    // require_once ROOT_PATH . "/db_connect.php";
 
     //query vars
     $week_scope = 3; // 3 weeks
@@ -39,7 +38,7 @@ if (isset($decoded['locations'])) {
     $response["success"] = 1;
     $response["message"] = "Data received.";
 
-    for ($i=8; $i < 23; $i++) { //from 8:00 to 23:00
+    for ($i=8; $i < 23; $i++) { //for each hour bracket from 8:00 to 23:00
         $i2=$i+1; //set end time to be one hour after first
         $count = 0;
 

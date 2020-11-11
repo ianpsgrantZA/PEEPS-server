@@ -20,8 +20,6 @@ if (isset($decoded['locations']) && isset($decoded['times']) ) {
     $locations = $decoded['locations'];
     $times = $decoded['times'];
     $length = count($times);
-    
-    // require_once ROOT_PATH . "/db_connect.php";
 
     //connect to DB
     $db_con = pg_connect("host=localhost port=5432 dbname=PEEPS user=postgres password=admin");
