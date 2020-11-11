@@ -27,7 +27,7 @@ if (isset($decoded['locations']) && isset($decoded['times']) ) {
     $db_con = pg_connect("host=localhost port=5432 dbname=PEEPS user=postgres password=admin");
 
     //query vars
-    $week_scope = 1; // 1 week
+    $week_scope = 3; // 3 weeks
     $current_date = date('Y-m-d');
     $previous_date = date('Y-m-d', strtotime('-' . $week_scope . ' week', strtotime($current_date)));
     $current_date = date('Y-m-d', strtotime('-' . $week_scope . ' day', strtotime($current_date)));

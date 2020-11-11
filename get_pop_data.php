@@ -15,10 +15,10 @@ $decoded = json_decode($content, true);
 define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'].'/peeps-server');
 
 //check for all required fields
-if (isset($decoded['location_lat']) && isset($decoded['location_lon']) ) {
+if (isset($decoded['locations'])) {
     
-    $lat = $decoded['location_lat'];
-    $lon = $decoded['location_lon'];
+    $locations = $decoded['locations'];
+    $length = count($locations);
     
     // require_once ROOT_PATH . "/db_connect.php";
 
@@ -41,32 +41,37 @@ if (isset($decoded['location_lat']) && isset($decoded['location_lon']) ) {
 
     for ($i=8; $i < 23; $i++) { //from 8:00 to 23:00
         $i2=$i+1; //set end time to be one hour after first
+        $count = 0;
 
-        //database query
-        $add_query = "SELECT COUNT(DISTINCT user_id) FROM public.location_data" .
-                " WHERE timestamp::date BETWEEN '$previous_date' AND '$current_date'" . // date within 3 weeks
-                " AND timestamp::time BETWEEN time '$i:00:00' AND time '$i2:00:00'" . //between hour and hour+1
-                " AND EXTRACT(DOW FROM timestamp) = " . $dow . // on day of week of current date
-                " AND ST_Distance(ST_Transform('SRID=4326;POINT($lon $lat)'::geometry, 3857), ST_Transform(ST_SetSRID(coordinates,4326),3857))  <= 20"; //within 20 meters of input coordinates
+        foreach ($locations as $loc) {
 
-        // echo $add_query;
-    
-        $result = pg_query($db_con, $add_query);
+            //database query
+            $add_query = "SELECT COUNT(DISTINCT user_id) FROM public.location_data" .
+                    " WHERE timestamp::date BETWEEN '$previous_date' AND '$current_date'" . // date within 3 weeks
+                    " AND timestamp::time BETWEEN time '$i:00:00' AND time '$i2:00:00'" . //between hour and hour+1
+                    " AND EXTRACT(DOW FROM timestamp) = " . $dow . // on day of week of current date
+                    " AND ST_Distance(ST_Transform('SRID=4326;POINT($loc[0] $loc[1])'::geometry, 3857), ST_Transform(ST_SetSRID(coordinates,4326),3857))  <= 20"; //within 20 meters of input coordinates
 
-        //check for errors
-        if ($result) {
-            //SUCCESS
-            $row = pg_fetch_assoc($result);
-            // $value = ($row["count"]+0)/$week_scope;
-            $response["n".strval($i)."_".strval($i2)] = $row["count"]+0;
+            // echo $add_query;
+        
+            $result = pg_query($db_con, $add_query);
 
-        } else {
-            // FAILURE
-            $response["success"] = 0;
-            $response["message"] = "Data not avaliable.";
+            //check for errors
+            if ($result) {
+                //SUCCESS
+                $row = pg_fetch_assoc($result);
+                // $value = ($row["count"]+0)/$week_scope;
+                $response["n".strval($i)."_".strval($i2)."_loc".$count] = $row["count"]+0;
 
-            $error = true;
-            break;
+            } else {
+                // FAILURE
+                $response["success"] = 0;
+                $response["message"] = "Data not avaliable.";
+
+                $error = true;
+                break;
+            }
+            $count++;
         }
 
     }
